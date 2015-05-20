@@ -11,5 +11,6 @@
     <string name="timeline_screename_label">ScreenName</string>
     <string name="timeline_createdat_label">CreatedAt</string>
     <string name="timeline_body_label">Timeline Body</string>
+    <string name="title_activity_timeline_progress_footer">TimelineProgressFooterActivity</string>
 
 </resources>
