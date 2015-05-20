@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Twitter Client</string>
+    <string name="login_label">CONNECT TO TWITTER</string>
+    <string name="title_activity_timeline">TimelineActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="timeline_user_label">Username</string>
+    <string name="timeline_screename_label">ScreenName</string>
+    <string name="timeline_createdat_label">CreatedAt</string>
+    <string name="timeline_body_label">Timeline Body</string>
+
+</resources>
