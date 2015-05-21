@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.codepath.apps.restclienttemplate.TimelineActivity">
 
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item
+        android:orderInCategory="50"
+        android:id="@+id/miComposeTweet"
+        android:title="Compose"
+        android:icon="@drawable/ic_twitter_compose"
+        app:showAsAction="always"
+        />
 
 </menu>

@@ -3,6 +3,8 @@ package com.codepath.apps.twitterclient.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,24 +12,33 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.apps.twitterclient.R;
 import com.codepath.apps.twitterclient.activities.TimelineActivity;
+import com.codepath.apps.twitterclient.models.User;
+import com.squareup.picasso.Picasso;
 
 public class TweetComposerDialog extends DialogFragment {
 
     static Context mContext;
     static TimelineActivity.TweetComposerDialogFragmentListener mListener;
 
+    EditText etTweetBody;
+    private TextView tvTweetsLeft;
+    private int tweetsTotal = 140;
+
     public TweetComposerDialog() { }
 
-    public static TweetComposerDialog newInstance(Context context, TimelineActivity.TweetComposerDialogFragmentListener listener) {
+    public static TweetComposerDialog newInstance(Context context, TimelineActivity.TweetComposerDialogFragmentListener listener, User user) {
         TweetComposerDialog dialog = new TweetComposerDialog();
         mContext = context;
         mListener = listener;
         Bundle args = new Bundle();
-//        args.putParcelable("SearchFilter", searchFilter);
+        args.putParcelable("User", user);
         dialog.setArguments(args);
         return dialog;
     }
@@ -37,80 +48,64 @@ public class TweetComposerDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_tweet_composer, container);
 
         // set dialog title
-//        getDialog().setTitle(R.string.advanced_search_label);
+        getDialog().setTitle("Compose a Tweet");
 
         // get SearchFilter model
-//        searchFilter = getArguments().getParcelable("SearchFilter");
+        User currentUser = getArguments().getParcelable("User");
 
         // initialize views
-//        spImageSize = (Spinner) view.findViewById(R.id.spImageSize);
-//        spImageColor = (Spinner) view.findViewById(R.id.spImageColor);
-//        spImageType = (Spinner) view.findViewById(R.id.spImageType);
-//        etSiteFilter = (EditText) view.findViewById(R.id.etSiteFilter);
-//
-//        btSave = (Button) view.findViewById(R.id.btSave);
-//        btSave.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                saveSettings();
-//            }
-//        });
-//
-//        btCancel = (Button) view.findViewById(R.id.btCancel);
-//        btCancel.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                cancelSettings();
-//            }
-//        });
+        TextView tvAccountUsername = (TextView) view.findViewById(R.id.tvAccountUsername);
+        TextView tvAccountScreenname = (TextView) view.findViewById(R.id.tvAccountScreenname);
+        tvTweetsLeft = (TextView) view.findViewById(R.id.tvTweetsLeft);
+        ImageView ivAccountProfileImage = (ImageView) view.findViewById(R.id.ivAccountProfileImage);
+        etTweetBody = (EditText) view.findViewById(R.id.etTweetBody);
 
-//        ArrayAdapter<CharSequence> aImageSize = ArrayAdapter.createFromResource(mContext, R.array.image_size_spinner_array, android.R.layout.simple_spinner_item);
-//        ArrayAdapter<CharSequence> aImageColor = ArrayAdapter.createFromResource(mContext, R.array.image_color_spinner_array, android.R.layout.simple_spinner_item);
-//        ArrayAdapter<CharSequence> aImageType = ArrayAdapter.createFromResource(mContext, R.array.image_type_spinner_array, android.R.layout.simple_spinner_item);
-//
-//        aImageSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        aImageColor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        aImageType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//        spImageSize.setAdapter(aImageSize);
-//        spImageColor.setAdapter(aImageColor);
-//        spImageType.setAdapter(aImageType);
-//
-//        // set defaults
-//        if(searchFilter.imgsz != null && !searchFilter.imgsz.isEmpty()) {
-//            int imageSizePos = aImageSize.getPosition(searchFilter.imgsz);
-//            spImageSize.setSelection(imageSizePos);
-//        }
-//
-//        if(searchFilter.imgcolor != null && !searchFilter.imgcolor.isEmpty()) {
-//            int imageColorPos = aImageColor.getPosition(searchFilter.imgcolor);
-//            spImageColor.setSelection(imageColorPos);
-//        }
-//
-//        if(searchFilter.imgtype != null && !searchFilter.imgtype.isEmpty()) {
-//            int imageTypePos = aImageType.getPosition(searchFilter.imgtype);
-//            spImageType.setSelection(imageTypePos);
-//        }
-//
-//        if(searchFilter.as_sitesearch != null && !searchFilter.as_sitesearch.isEmpty()) {
-//            etSiteFilter.setText(searchFilter.as_sitesearch);
-//        }
-//
-//        spImageSize.requestFocus();
+        tvAccountUsername.setText(currentUser.getName());
+        tvAccountScreenname.setText(currentUser.getScreenName());
+        tvTweetsLeft.setText((tweetsTotal + ""));
+        Picasso.with(mContext).load(currentUser.getProfileImageUrl()).into(ivAccountProfileImage);
+
+        Button btSendTweet = (Button) view.findViewById(R.id.btSendTweet);
+        Button btCancel = (Button) view.findViewById(R.id.btCancel);
+
+        btSendTweet.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendTweet();
+            }
+        });
+
+        btCancel.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                cancelTweet();
+            }
+        });
+
+        etTweetBody.addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+                int tweetsLeft = (tweetsTotal - etTweetBody.length());
+                tvTweetsLeft.setText(String.valueOf(tweetsLeft));
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        etTweetBody.requestFocus();
 
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         return view;
     }
 
-    public void saveSettings() {
-//        searchFilter.imgsz = spImageSize.getSelectedItem().toString();
-//        searchFilter.imgcolor = spImageColor.getSelectedItem().toString();
-//        searchFilter.imgtype = spImageType.getSelectedItem().toString();
-//        searchFilter.as_sitesearch = etSiteFilter.getText().toString();
-//
-//        mListener.updateSettings(searchFilter);
+    public void sendTweet() {
+        String tweet = etTweetBody.getText().toString();
+        if (tweet.length() < 1) {
+            Toast.makeText(mContext, "Tweet body is empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mListener.sendTweet(tweet);
         this.dismiss();
     }
 
-    public void cancelSettings() {
+    public void cancelTweet() {
         this.dismiss();
     }
 }

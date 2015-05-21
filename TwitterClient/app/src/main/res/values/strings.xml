@@ -3,14 +3,21 @@
 
     <string name="app_name">Twitter Client</string>
     <string name="login_label">CONNECT TO TWITTER</string>
-    <string name="title_activity_timeline">TimelineActivity</string>
+    <string name="title_activity_timeline">Home</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="timeline_user_label">Username</string>
     <string name="timeline_screename_label">ScreenName</string>
     <string name="timeline_createdat_label">CreatedAt</string>
     <string name="timeline_body_label">Timeline Body</string>
     <string name="title_activity_timeline_progress_footer">TimelineProgressFooterActivity</string>
+    <string name="composer_account_profile_label">Username</string>
+    <string name="composer_account_screenname_label">Screen Name</string>
+    <string name="composer_tweetbody_hint">What\'s happening?</string>
+    <string name="composer_sendtweet_button_label">Tweet</string>
+    <string name="composer_canceltweet_button_label">Cancel</string>
+    <string name="composer_charsleft" />
+    <string name="composer" />
+    <string name="composer_tweetsleft_label">TweetsLeft</string>
 
 </resources>

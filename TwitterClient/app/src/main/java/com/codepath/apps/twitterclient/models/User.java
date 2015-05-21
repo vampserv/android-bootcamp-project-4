@@ -1,5 +1,8 @@
 package com.codepath.apps.twitterclient.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -17,7 +20,7 @@ import java.util.List;
  * 
  */
 @Table(name = "items")
-public class User extends Model {
+public class User extends Model implements Parcelable {
 
     // Define table fields
 	@Column(name = "name")
@@ -79,4 +82,38 @@ public class User extends Model {
 	public static List<User> recentItems() {
 		return new Select().from(User.class).orderBy("id DESC").limit("300").execute();
 	}
+
+
+    private User(Parcel in) {
+        this.name = in.readString();
+        this.uid = in.readLong();
+        this.screenName = in.readString();
+        this.profileImageUrl = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeLong(uid);
+        dest.writeString(screenName);
+        dest.writeString(profileImageUrl);
+    }
+
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+    
 }

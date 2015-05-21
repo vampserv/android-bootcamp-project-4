@@ -4,6 +4,93 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.edward.googleimagesearch.fragments.EditSettingsDialog">
+    tools:context="com.edward.googleimagesearch.fragments.EditSettingsDialog"
+    android:focusableInTouchMode="true">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivAccountProfileImage"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_launcher"
+        android:layout_alignBottom="@+id/tvAccountScreenname"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/composer_account_profile_label"
+        android:id="@+id/tvAccountUsername"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ivAccountProfileImage"
+        android:layout_toEndOf="@+id/ivAccountProfileImage"
+        android:textColor="#ff424242"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/composer_account_screenname_label"
+        android:id="@+id/tvAccountScreenname"
+        android:textColor="#ffa1a1a1"
+        android:layout_below="@+id/tvAccountUsername"
+        android:layout_alignLeft="@+id/tvAccountUsername"
+        android:layout_alignStart="@+id/tvAccountUsername"
+        android:textSize="13dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/etTweetBody"
+        android:gravity="left"
+        android:textColorHint="#ffa1a1a1"
+        android:layout_below="@+id/ivAccountProfileImage"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="@string/composer_tweetbody_hint"
+        android:lines="4"
+        android:maxLength="140"
+        android:layout_marginTop="7dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/composer_sendtweet_button_label"
+        android:id="@+id/btSendTweet"
+        android:layout_below="@+id/etTweetBody"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="#fff"
+        android:background="@color/twitter_blue"
+        android:clickable="true"
+        android:layout_alignRight="@+id/tvAccountScreenname"
+        android:layout_alignEnd="@+id/tvAccountScreenname"
+        android:layout_alignBottom="@+id/btCancel" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/composer_canceltweet_button_label"
+        android:id="@+id/btCancel"
+        android:layout_below="@+id/etTweetBody"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#ccc"
+        android:textColor="#fff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/composer_tweetsleft_label"
+        android:id="@+id/tvTweetsLeft"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

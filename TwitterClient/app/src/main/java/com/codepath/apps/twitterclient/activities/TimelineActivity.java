@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.codepath.apps.twitterclient.R;
 import com.codepath.apps.twitterclient.adapters.EndlessScrollListener;
@@ -23,10 +24,12 @@ import com.codepath.apps.twitterclient.helpers.TweetUtilities;
 import com.codepath.apps.twitterclient.helpers.TwitterApplication;
 import com.codepath.apps.twitterclient.helpers.TwitterClient;
 import com.codepath.apps.twitterclient.models.Tweet;
+import com.codepath.apps.twitterclient.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,11 +39,17 @@ public class TimelineActivity extends ActionBarActivity {
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
     private TweetResultsAdapter aTweets;
+    private TweetUtilities utils;
 
+    Toolbar toolbar;
     ProgressBar pbFooterLoading;
     private ListView lvTweets;
 
     private SwipeRefreshLayout swipeContainer;
+
+    public long lowestId = 0;
+    public long highestId = 0;
+    public User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +62,32 @@ public class TimelineActivity extends ActionBarActivity {
         aTweets = new TweetResultsAdapter(this, tweets);
         lvTweets.setAdapter(aTweets);
 
+        // setup swipe-to-refresh
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                populateTimeline(1);
+                // only get new results
+                populateTimeline(0, highestId);
             }
         });
 
         client = TwitterApplication.getRestClient();
-        populateTimeline(1);
+
+        // get current user information
+        getCurrentUser();
+
+        // get results without filtering/pagination
+        populateTimeline(0, 0);
     }
 
     private void setupViews() {
+
+        // enable actionbar icon
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
+
         lvTweets = (ListView) findViewById(R.id.lvTimeline);
 //        lvTweets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -89,48 +111,118 @@ public class TimelineActivity extends ActionBarActivity {
         lvTweets.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                populateTimeline(page);
+            populateTimeline(0, lowestId);
             }
         });
 
     }
 
-    private void populateTimeline(int page) {
+    private void populateTimeline(long lowest, long highest) {
+
+        if(!utils.isNetworkAvailable(this)) {
+            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         pbFooterLoading.setVisibility(View.VISIBLE);
 
-        client.getHomeTimeline(page, new JsonHttpResponseHandler() {
+        client.getHomeTimeline(lowest, highest, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                aTweets.addAll(Tweet.fromJSONArray(response));
+                ArrayList<Tweet> currentTweets = Tweet.fromJSONArray(response);
+
+                // some logic to paginate results more efficiently
+                if (currentTweets.size() > 0) {
+                    Tweet lastTweet = currentTweets.get(currentTweets.size() - 1);
+                    Tweet firstTweet = currentTweets.get(0);
+                    if (currentTweets.size() == 1 && firstTweet.getUid() == highestId) {
+                        // dont append to adapter since its a duplicate
+                    } else {
+                        if (firstTweet.getUid() > highestId) {
+                            highestId = firstTweet.getUid();
+                        }
+                        if (lastTweet.getUid() < lowestId || lowestId == 0) {
+                            lowestId = lastTweet.getUid();
+                        }
+                        aTweets.addAll(currentTweets);
+                    }
+                }
+
+                // update views
                 swipeContainer.setRefreshing(false);
                 pbFooterLoading.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
-                Toast.makeText(TimelineActivity.this, "Error retrieving results, please try again later", Toast.LENGTH_SHORT).show();
+                displayTwitterError("retrieving timeline", error);
                 pbFooterLoading.setVisibility(View.GONE);
             }
 
         });
     }
 
-    // launch tweet composer in a dialog
-    private void launchTweetComposerDialog() {
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        TweetComposerDialog esd = TweetComposerDialog.newInstance(this, new TweetComposerDialogFragmentListener(){
-            public void updateSettings(){
-                aTweets.clear();
-                populateTimeline(1);
+    private void getCurrentUser() {
+
+        if(!utils.isNetworkAvailable(this)) {
+            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        client.getCurrentUserInfo(new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                currentUser = User.fromJSON(response);
             }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+                displayTwitterError("retrieving current user info", error);
+            }
+
         });
-        esd.show(fm, "fragment_edit_settings");
     }
 
-    public interface TweetComposerDialogFragmentListener {
-        public void updateSettings();
+    private void sendTweetAsync(String tweetBody) {
+
+        if(!utils.isNetworkAvailable(this)) {
+            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        client.postStatusUpdate(tweetBody, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                aTweets.clear();
+                // only get new results
+                populateTimeline(0, highestId);
+                Toast.makeText(TimelineActivity.this, "Your status has been updated!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+                displayTwitterError("composing tweet", error);
+            }
+
+        });
+    }
+
+    // an error handler for twitter error responses to display a toast with one or more error messages returned from twitter
+    private void displayTwitterError(String action, JSONObject error) {
+        try {
+            JSONArray errorArray = error.getJSONArray("errors");
+            String errors = "";
+            for (int i = 0; i < errorArray.length(); i++) {
+                if (i != 0) errors += ", ";
+                errors += errorArray.getJSONObject(i).getString("message");
+            }
+            Toast.makeText(TimelineActivity.this, "Error " + action + ": " + errors, Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            Toast.makeText(TimelineActivity.this, "Error " + action + ", please try again later", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -148,10 +240,28 @@ public class TimelineActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.miComposeTweet) {
+            launchTweetComposerDialog();
+            Toast.makeText(this, "clicked compose tweet", Toast.LENGTH_SHORT).show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    // launch tweet composer in a dialog
+    private void launchTweetComposerDialog() {
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        TweetComposerDialog esd = TweetComposerDialog.newInstance(this, new TweetComposerDialogFragmentListener() {
+            public void sendTweet(String tweetBody){
+                sendTweetAsync(tweetBody);
+            }
+        }, currentUser);
+        esd.show(fm, "fragment_tweet_composer");
+    }
+
+    public interface TweetComposerDialogFragmentListener {
+        public void sendTweet(String tweetBody);
+    }
+
 }
