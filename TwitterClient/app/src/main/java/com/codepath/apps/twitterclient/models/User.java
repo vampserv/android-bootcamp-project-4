@@ -11,6 +11,7 @@ import com.activeandroid.query.Select;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -61,6 +62,14 @@ public class User extends Model implements Parcelable {
         return user;
     }
 
+    public User getMockUser() {
+        User user = new User();
+        user.name = "Mock User";
+        user.uid = 23232323;
+        user.screenName = "my_mock_name";
+        user.profileImageUrl = "http://abs.twimg.com/sticky/default_profile_images/default_profile_6_normal.png";
+        return user;
+    }
 	// Parse model from JSON
 	public User(JSONObject json){
         User user = new User();

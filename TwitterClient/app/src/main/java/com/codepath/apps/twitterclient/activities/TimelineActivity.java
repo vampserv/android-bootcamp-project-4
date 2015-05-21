@@ -13,6 +13,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
@@ -89,18 +90,16 @@ public class TimelineActivity extends ActionBarActivity {
         getSupportActionBar().setTitle(null);
 
         lvTweets = (ListView) findViewById(R.id.lvTimeline);
-//        lvTweets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-////                Intent i = new Intent(GoogleImageSearchActivity.this, ImageDisplayActivity.class);
-////                // get image result
-////                ImageResult result = imageResults.get(position);
-////                // pass image result into intent
-////                i.putExtra("ImageResult", (ImageResult) aImageResults.getItem(position));
-////                // launch new activity
-////                startActivity(i);
-//            }
-//        });
+        lvTweets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(TimelineActivity.this, TweetDetailsActivity.class);
+                // get tweet from adapter and pass into intent
+                i.putExtra("Tweet", (Tweet) aTweets.getItem(position));
+                // launch new activity
+                startActivity(i);
+            }
+        });
 
         // add a progress bar for listview footer
         View footer = getLayoutInflater().inflate(R.layout.activity_timeline_progress_footer, null);
@@ -111,7 +110,7 @@ public class TimelineActivity extends ActionBarActivity {
         lvTweets.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-            populateTimeline(0, lowestId);
+                populateTimeline(0, lowestId);
             }
         });
 
@@ -157,6 +156,7 @@ public class TimelineActivity extends ActionBarActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
                 displayTwitterError("retrieving timeline", error);
+                aTweets.add(new Tweet().getMockTweet());
                 pbFooterLoading.setVisibility(View.GONE);
             }
 

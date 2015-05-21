@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.twitterclient.R;
-import com.codepath.apps.twitterclient.helpers.DynamicImageView;
+import com.codepath.apps.twitterclient.helpers.LinkifiedTextView;
 import com.codepath.apps.twitterclient.models.Tweet;
 import com.squareup.picasso.Picasso;
 
@@ -51,7 +51,7 @@ public class TweetResultsAdapter extends ArrayAdapter<Tweet> {
         }
 
         viewHolder.tvUser.setText(tweet.getUser().getName());
-        viewHolder.tvBody.setText(Html.fromHtml(tweet.getBody()));
+        viewHolder.tvBody.setText(tweet.getBody());
         viewHolder.tvScreenName.setText(tweet.getUser().getScreenName());
         viewHolder.tvCreatedAt.setText(tweet.getCreatedAt());
         viewHolder.ivProfileImage.setImageResource(0);

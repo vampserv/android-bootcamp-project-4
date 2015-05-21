@@ -19,5 +19,9 @@
     <string name="composer_charsleft" />
     <string name="composer" />
     <string name="composer_tweetsleft_label">TweetsLeft</string>
+    <string name="title_activity_tweet_details">TweetDetailsActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="details_media_label">Associated Media</string>
 
 </resources>

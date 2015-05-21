@@ -5,6 +5,7 @@
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
     android:paddingTop="4dp"
+    android:descendantFocusability="blocksDescendants"
     tools:context="com.codepath.apps.restclienttemplate.TimelineActivity">
 
     <ImageView
@@ -54,6 +55,8 @@
         android:layout_height="wrap_content"
         android:text="@string/timeline_body_label"
         android:id="@+id/tvBody"
+        android:autoLink="all"
+        android:linksClickable="true"
         android:layout_below="@+id/tvUser"
         android:layout_alignLeft="@+id/tvUser"
         android:layout_alignStart="@+id/tvUser"

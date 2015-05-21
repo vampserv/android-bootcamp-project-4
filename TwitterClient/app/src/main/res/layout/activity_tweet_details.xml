@@ -1,0 +1,115 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    tools:context="com.codepath.apps.twitterclient.activities.TweetDetailsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#59aeeb">
+        <ImageButton
+            android:scaleType="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ibBackButton"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/ic_action_back"
+            android:background="@color/twitter_blue" />
+        <ImageView
+            android:scaleType="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivTwitterIcon"
+            android:src="@drawable/ic_twitter"
+            android:layout_marginRight="8dp" />
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:scaleType="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivProfileImage"
+        android:src="@drawable/ic_launcher"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timeline_user_label"
+        android:id="@+id/tvUser"
+        android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timeline_screename_label"
+        android:id="@+id/tvScreenName"
+        android:textSize="13dp"
+        android:layout_alignBottom="@+id/tvUser"
+        android:layout_toRightOf="@+id/tvUser"
+        android:layout_toEndOf="@+id/tvUser"
+        android:textColor="#ffaeaeae"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timeline_createdat_label"
+        android:id="@+id/tvCreatedAt"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="#ffaeaeae"
+        android:textSize="15dp"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timeline_body_label"
+        android:id="@+id/tvBody"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:layout_below="@+id/tvUser"
+        android:layout_alignLeft="@+id/tvUser"
+        android:layout_alignStart="@+id/tvUser"
+        android:layout_alignRight="@+id/tvCreatedAt"
+        android:layout_alignEnd="@+id/tvCreatedAt" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/details_media_label"
+        android:id="@+id/tvMediaLabel"
+        android:textStyle="bold"
+        android:layout_below="@+id/tvBody"
+        android:layout_alignLeft="@+id/tvBody"
+        android:layout_alignStart="@+id/tvBody"
+        android:layout_marginTop="20dp" />
+
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gvMedia"
+        android:layout_alignLeft="@+id/tvMediaLabel"
+        android:layout_alignStart="@+id/tvMediaLabel"
+        android:numColumns="3"
+        android:layout_alignRight="@+id/tvBody"
+        android:layout_alignEnd="@+id/tvBody"
+        android:layout_below="@+id/tvMediaLabel"
+        android:layout_marginTop="6dp" />
+
+</RelativeLayout>
