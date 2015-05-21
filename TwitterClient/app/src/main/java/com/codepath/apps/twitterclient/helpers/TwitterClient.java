@@ -40,7 +40,7 @@ public class TwitterClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         params.put("count", RESULTS_PER_PAGE);
         if(lowestId > 0) {
-            params.put("maxId", lowestId);
+            params.put("max_id", lowestId);
         }
         if(highestId > 0) {
             params.put("since_id", highestId);

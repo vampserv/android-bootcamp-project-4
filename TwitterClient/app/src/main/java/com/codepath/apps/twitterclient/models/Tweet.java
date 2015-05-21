@@ -99,8 +99,8 @@ public class Tweet extends Model implements Parcelable {
         tweet.body = "This is a mock body http://www.google.com";
         tweet.uid = 38488738;
         tweet.createdAt = utils.getRelativeTimeAgo("Thu May 21 05:38:31 +0000 2015");
-        User user = new User().getMockUser();
-        tweet.user = user;
+
+        tweet.user = new User().getMockUser();
 
         tweet.hashtags = new ArrayList<String>();
         tweet.hashtags.add("foo");
@@ -113,9 +113,9 @@ public class Tweet extends Model implements Parcelable {
         tweet.userMentions.add("@user3");
 
         tweet.urls = new ArrayList<String>();
-        urls.add("http://bit.ly/oauth-dancer");
-        urls.add("http://www.github.com");
-        urls.add("http://www.google.com");
+        tweet.urls.add("http://bit.ly/oauth-dancer");
+        tweet.urls.add("http://www.github.com");
+        tweet.urls.add("http://www.google.com");
 
         tweet.media = new ArrayList<String>();
         tweet.media.add("http://pbs.twimg.com/media/CFcN1TcW8AApMFI.png");

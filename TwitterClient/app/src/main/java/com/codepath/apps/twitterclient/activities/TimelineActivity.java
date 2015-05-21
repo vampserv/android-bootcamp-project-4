@@ -79,9 +79,6 @@ public class TimelineActivity extends ActionBarActivity {
 
         // get current user information
         getCurrentUser();
-
-        // get results without filtering/pagination
-        populateTimeline(0, 0);
     }
 
     private void setupViews() {
@@ -112,7 +109,7 @@ public class TimelineActivity extends ActionBarActivity {
         lvTweets.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                populateTimeline(0, lowestId);
+                populateTimeline(lowestId, 0);
             }
         });
 
