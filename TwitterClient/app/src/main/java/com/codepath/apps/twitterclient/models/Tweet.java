@@ -95,31 +95,33 @@ public class Tweet extends Model implements Parcelable {
 
     public Tweet getMockTweet() {
         Tweet tweet = new Tweet();
+
         tweet.body = "This is a mock body http://www.google.com";
         tweet.uid = 38488738;
         tweet.createdAt = utils.getRelativeTimeAgo("Thu May 21 05:38:31 +0000 2015");
         User user = new User().getMockUser();
         tweet.user = user;
-        ArrayList<String> hashtags = new ArrayList<String>();
-        hashtags.add("foo");
-        hashtags.add("bar");
-        hashtags.add("baz");
-        tweet.hashtags = hashtags;
-        ArrayList<String> userMentions = new ArrayList<String>();
-        hashtags.add("@user1");
-        hashtags.add("@user2");
-        hashtags.add("@user3");
-        tweet.userMentions = userMentions;
-        ArrayList<String> urls = new ArrayList<String>();
-        hashtags.add("http://bit.ly/oauth-dancer");
-        hashtags.add("http://www.github.com");
-        hashtags.add("http://www.google.com");
-        tweet.urls = urls;
-        ArrayList<String> media = new ArrayList<String>();
-        hashtags.add("http://pbs.twimg.com/media/CFcN1TcW8AApMFI.png");
-        hashtags.add("http://profiler.nethosting.com/assets/images/screenshots/www.github.com.png");
-        hashtags.add("https://camo.githubusercontent.com/59e62574be2bca1ff331ae85ee1c0b392310c599/687474703a2f2f692e696d6775722e636f6d2f39414150344d782e706e67");
-        tweet.media = media;
+
+        tweet.hashtags = new ArrayList<String>();
+        tweet.hashtags.add("foo");
+        tweet.hashtags.add("bar");
+        tweet.hashtags.add("baz");
+
+        tweet.userMentions = new ArrayList<String>();
+        tweet.userMentions.add("@user1");
+        tweet.userMentions.add("@user2");
+        tweet.userMentions.add("@user3");
+
+        tweet.urls = new ArrayList<String>();
+        urls.add("http://bit.ly/oauth-dancer");
+        urls.add("http://www.github.com");
+        urls.add("http://www.google.com");
+
+        tweet.media = new ArrayList<String>();
+        tweet.media.add("http://pbs.twimg.com/media/CFcN1TcW8AApMFI.png");
+        tweet.media.add("http://profiler.nethosting.com/assets/images/screenshots/www.github.com.png");
+        tweet.media.add("https://camo.githubusercontent.com/59e62574be2bca1ff331ae85ee1c0b392310c599/687474703a2f2f692e696d6775722e636f6d2f39414150344d782e706e67");
+
         return tweet;
     }
 

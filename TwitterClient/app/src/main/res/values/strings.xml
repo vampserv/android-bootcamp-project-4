@@ -19,9 +19,13 @@
     <string name="composer_charsleft" />
     <string name="composer" />
     <string name="composer_tweetsleft_label">TweetsLeft</string>
+
     <string name="title_activity_tweet_details">TweetDetailsActivity</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="details_media_label">Associated Media</string>
+    <string name="details_replybody_hint">Your Response?</string>
+    <string name="details_reply_button_text">REPLY</string>
+    <string name="details_hashtag_title_label">Hashtags</string>
+    <string name="details_hashtag_label">no associated hashtags</string>
+    <string name="details_media_title_label">Media</string>
 
 </resources>

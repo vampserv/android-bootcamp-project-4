@@ -1,5 +1,6 @@
 package com.codepath.apps.twitterclient.activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import com.codepath.apps.twitterclient.R;
 import com.codepath.apps.twitterclient.adapters.MediaAdapter;
 import com.codepath.apps.twitterclient.helpers.LinkifiedTextView;
+import com.codepath.apps.twitterclient.helpers.TweetUtilities;
 import com.codepath.apps.twitterclient.models.Tweet;
 import com.squareup.picasso.Picasso;
 
@@ -23,12 +27,17 @@ import java.util.ArrayList;
 
 public class TweetDetailsActivity extends ActionBarActivity {
 
+    Tweet tweet;
+    TweetUtilities utils;
+
+    EditText etTweetReply;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_details);
 
-        Tweet tweet = getIntent().getParcelableExtra("Tweet");
+        tweet = getIntent().getParcelableExtra("Tweet");
 
         TextView tvUser = (TextView) findViewById(R.id.tvUser);
         TextView tvBody = (TextView) findViewById(R.id.tvBody);
@@ -36,6 +45,9 @@ public class TweetDetailsActivity extends ActionBarActivity {
         TextView tvCreatedAt = (TextView) findViewById(R.id.tvCreatedAt);
         ImageView ivProfileImage = (ImageView) findViewById(R.id.ivProfileImage);
         ImageButton ibBackButton = (ImageButton) findViewById(R.id.ibBackButton);
+        etTweetReply = (EditText) findViewById(R.id.etTweetReply);
+        Button btSendReply = (Button) findViewById(R.id.btSendReply);
+        TextView tvHashtags = (TextView) findViewById(R.id.tvHashtags);
 
         tvUser.setText(tweet.getUser().getName());
         tvBody.setText(tweet.getBody());
@@ -45,20 +57,38 @@ public class TweetDetailsActivity extends ActionBarActivity {
         Picasso.with(this).load(tweet.getUser().getProfileImageUrl()).placeholder(R.drawable.placeholder).into(ivProfileImage);
 
         GridView gvMedia = (GridView) findViewById(R.id.gvMedia);
-        MediaAdapter aMedia = new MediaAdapter(this, tweet.getMedia());
-        gvMedia.setAdapter(aMedia);
+        ArrayList<String> media = tweet.getMedia();
+        MediaAdapter aMedia =  new MediaAdapter(this, media);
+
+        if (media == null) {
+            gvMedia.setAdapter(null);
+        } else {
+            gvMedia.setAdapter(aMedia);
+        }
 
         ibBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(RESULT_CANCELED);
                 TweetDetailsActivity.this.finish();
             }
         });
 
-    }
+        tvHashtags.setText(utils.ArrayListToString(tweet.getHashtags(), "#", " "));
 
-    public void onBackButtonClick() {
-        this.finish();
+        btSendReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent data = new Intent();
+                data.putExtra("tweetReply", etTweetReply.getText().toString());
+                data.putExtra("replyToId", tweet.getUid());
+                setResult(RESULT_OK, data);
+                TweetDetailsActivity.this.finish();
+            }
+        });
+
+        etTweetReply.requestFocus();
+
     }
 
     @Override

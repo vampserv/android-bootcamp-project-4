@@ -29,7 +29,7 @@ public class TwitterClient extends OAuthBaseClient {
 	public static final String REST_CONSUMER_SECRET = "VzDW2d3bUsHP2EB8qIKF0UEonZ7G5C7NK1k19DU0seUqNoii6d"; // Change this
 	public static final String REST_CALLBACK_URL = "oauth://cptwitterclient"; // Change this (here and in manifest)
 
-    int RESULTS_PER_PAGE = 8;
+    int RESULTS_PER_PAGE = 10;
 
 	public TwitterClient(Context context) {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
@@ -54,10 +54,13 @@ public class TwitterClient extends OAuthBaseClient {
         client.get(apiUrl, params, handler);
     }
 
-    public void postStatusUpdate(String tweetBody, AsyncHttpResponseHandler handler) {
+    public void postStatusUpdate(String tweetBody, long replyToId, AsyncHttpResponseHandler handler) {
         String apiUrl = getApiUrl("statuses/update.json");
         RequestParams params = new RequestParams();
         params.put("status", tweetBody);
+        if (replyToId != 0) {
+            params.put("in_reply_to_status_id", replyToId);
+        }
         client.post(apiUrl, params, handler);
     }
 

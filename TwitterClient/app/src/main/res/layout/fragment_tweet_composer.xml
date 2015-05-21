@@ -46,7 +46,7 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/etTweetBody"
-        android:gravity="left"
+        android:gravity="start"
         android:textColorHint="#ffa1a1a1"
         android:layout_below="@+id/ivAccountProfileImage"
         android:layout_alignParentRight="true"

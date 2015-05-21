@@ -52,6 +52,8 @@ public class TimelineActivity extends ActionBarActivity {
     public long highestId = 0;
     public User currentUser;
 
+    private int TWEET_DETAILS_REQUEST_CODE = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,8 +98,8 @@ public class TimelineActivity extends ActionBarActivity {
                 Intent i = new Intent(TimelineActivity.this, TweetDetailsActivity.class);
                 // get tweet from adapter and pass into intent
                 i.putExtra("Tweet", (Tweet) aTweets.getItem(position));
-                // launch new activity
-                startActivity(i);
+                // launch new activity for result
+                startActivityForResult(i, TWEET_DETAILS_REQUEST_CODE);
             }
         });
 
@@ -185,14 +187,14 @@ public class TimelineActivity extends ActionBarActivity {
         });
     }
 
-    private void sendTweetAsync(String tweetBody) {
+    private void sendTweetAsync(String tweetBody, long replyToId) {
 
         if(!utils.isNetworkAvailable(this)) {
             Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        client.postStatusUpdate(tweetBody, new JsonHttpResponseHandler() {
+        client.postStatusUpdate(tweetBody, replyToId, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -242,7 +244,6 @@ public class TimelineActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.miComposeTweet) {
             launchTweetComposerDialog();
-            Toast.makeText(this, "clicked compose tweet", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -254,7 +255,7 @@ public class TimelineActivity extends ActionBarActivity {
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         TweetComposerDialog esd = TweetComposerDialog.newInstance(this, new TweetComposerDialogFragmentListener() {
             public void sendTweet(String tweetBody){
-                sendTweetAsync(tweetBody);
+                sendTweetAsync(tweetBody, 0);
             }
         }, currentUser);
         esd.show(fm, "fragment_tweet_composer");
@@ -263,5 +264,16 @@ public class TimelineActivity extends ActionBarActivity {
     public interface TweetComposerDialogFragmentListener {
         public void sendTweet(String tweetBody);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK && requestCode == TWEET_DETAILS_REQUEST_CODE) {
+            // get tweet reply and send async
+            String tweetReply = data.getStringExtra("tweetReply");
+            long replyToId = data.getLongExtra("replyToId", 0);
+            sendTweetAsync(tweetReply, replyToId);
+        }
+    }
+
 
 }

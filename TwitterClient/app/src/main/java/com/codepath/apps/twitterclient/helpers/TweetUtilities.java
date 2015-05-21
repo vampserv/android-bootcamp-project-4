@@ -7,6 +7,7 @@ import android.text.format.DateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -37,6 +38,14 @@ public class TweetUtilities {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    public static String ArrayListToString(ArrayList<String> array, String prefix, String delimiter) {
+        String res = "";
+        for (String s : array) {
+            res += prefix + s + delimiter;
+        }
+        return res;
     }
 
 }
