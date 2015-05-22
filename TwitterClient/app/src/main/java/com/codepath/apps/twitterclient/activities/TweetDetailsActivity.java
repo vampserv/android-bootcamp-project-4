@@ -74,7 +74,11 @@ public class TweetDetailsActivity extends ActionBarActivity {
             }
         });
 
-        tvHashtags.setText(utils.ArrayListToString(tweet.hashtags, "#", " "));
+        String hashtags = utils.ArrayListToString(tweet.hashtags, "#", " ");
+        if (hashtags == "#"){
+            hashtags = "";
+        }
+        tvHashtags.setText(hashtags);
 
         btSendReply.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -121,7 +121,8 @@ public class TimelineActivity extends ActionBarActivity {
     private void populateTimeline(long lowest, long highest) {
 
         if(!utils.isNetworkAvailable(this)) {
-            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
+            swipeContainer.setRefreshing(false);
             return;
         }
 
@@ -209,7 +210,7 @@ public class TimelineActivity extends ActionBarActivity {
     private void getCurrentUser() {
 
         if(!utils.isNetworkAvailable(this)) {
-            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -228,10 +229,10 @@ public class TimelineActivity extends ActionBarActivity {
         });
     }
 
-    private void sendTweetAsync(String tweetBody, long replyToId) {
+    private void sendTweetAsync(final String tweetBody, long replyToId) {
 
         if(!utils.isNetworkAvailable(this)) {
-            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "No internet connection, please try again later", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -239,9 +240,19 @@ public class TimelineActivity extends ActionBarActivity {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                aTweets.clear();
                 // only get new results (not db cached results)
-                populateTimeline(0, highestId);
+//                populateTimeline(0, highestId);
+                Tweet newTweet = new Tweet(response);
+
+                // save new tweet async
+                ArrayList<Tweet> newTweets = new ArrayList<Tweet>();
+                newTweets.add(newTweet);
+                new AsyncSaveToDB().execute(newTweets);
+
+                // insert to top of arrayadapter
+                aTweets.insert(newTweet, 0);
+                highestId = newTweet.uid;
+
                 Toast.makeText(TimelineActivity.this, "Your status has been updated!", Toast.LENGTH_SHORT).show();
             }
 
