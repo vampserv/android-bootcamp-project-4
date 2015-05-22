@@ -7,15 +7,24 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.codepath.apps.twitterclient.R;
+import com.codepath.apps.twitterclient.helpers.TweetUtilities;
 import com.codepath.apps.twitterclient.helpers.TwitterClient;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
 
 public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 
+    TweetUtilities utils;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+
+        if (!utils.isNetworkAvailable(this)) {
+            Intent i = new Intent(this, TimelineActivity.class);
+            startActivity(i);
+        }
+
 	}
 
 
@@ -32,7 +41,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	public void onLoginSuccess() {
 		Intent i = new Intent(this, TimelineActivity.class);
 		startActivity(i);
-//        Toast.makeText(this, "SUCCESS", Toast.LENGTH_SHORT).show();
     }
 
 	// OAuth authentication flow failed, handle the error

@@ -24,10 +24,12 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="RestClient.db" />
+            android:value="roflcopter.sqlite" />
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1" />
+        <meta-data android:name="AA_SERIALIZERS"
+            android:value="com.codepath.apps.twitterclient.helpers.ArrayListSerializer" />
 
         <activity
             android:name=".activities.LoginActivity"

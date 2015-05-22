@@ -1,30 +1,28 @@
 package com.codepath.apps.twitterclient.activities;
 
 import android.content.Intent;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
-import com.activeandroid.query.Select;
 import com.codepath.apps.twitterclient.R;
 import com.codepath.apps.twitterclient.adapters.EndlessScrollListener;
 import com.codepath.apps.twitterclient.adapters.TweetResultsAdapter;
 import com.codepath.apps.twitterclient.fragments.TweetComposerDialog;
+import com.codepath.apps.twitterclient.helpers.AsyncRetrieveFromDB;
+import com.codepath.apps.twitterclient.helpers.AsyncSaveToDB;
 import com.codepath.apps.twitterclient.helpers.TweetUtilities;
 import com.codepath.apps.twitterclient.helpers.TwitterApplication;
 import com.codepath.apps.twitterclient.helpers.TwitterClient;
+import com.codepath.apps.twitterclient.interfaces.AsyncListResponse;
 import com.codepath.apps.twitterclient.models.Tweet;
 import com.codepath.apps.twitterclient.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -43,6 +41,7 @@ public class TimelineActivity extends ActionBarActivity {
     private ArrayList<Tweet> tweets;
     private TweetResultsAdapter aTweets;
     private TweetUtilities utils;
+    private AsyncRetrieveFromDB cacheMgr;
 
     Toolbar toolbar;
     ProgressBar pbFooterLoading;
@@ -72,7 +71,7 @@ public class TimelineActivity extends ActionBarActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // only get new results
+                // only get new results (not db cached results)
                 populateTimeline(0, highestId);
             }
         });
@@ -80,7 +79,9 @@ public class TimelineActivity extends ActionBarActivity {
         client = TwitterApplication.getRestClient();
 
         // get current user information
-        getCurrentUser();
+        if (currentUser == null) {
+            getCurrentUser();
+        }
     }
 
     private void setupViews() {
@@ -111,7 +112,7 @@ public class TimelineActivity extends ActionBarActivity {
         lvTweets.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                populateTimeline(lowestId, 0);
+                populateTimelineFromDbOrRest(lowestId);
             }
         });
 
@@ -126,19 +127,13 @@ public class TimelineActivity extends ActionBarActivity {
 
         pbFooterLoading.setVisibility(View.VISIBLE);
 
-//        List<Tweet> queryResults = new Select().from(Tweet.class)
-//                .where("Category = ?", category.getId())
-//                .orderBy("Name ASC")
-//                .orderBy("Name ASC").limit(100);
-//
-//
-//        queryResults.execute();
-
         client.getHomeTimeline(lowest, highest, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 ArrayList<Tweet> currentTweets = Tweet.fromJSONArray(response);
+
+//                Toast.makeText(TimelineActivity.this, "fetching new tweets, please wait..", Toast.LENGTH_SHORT).show();
 
                 // some logic to paginate results more efficiently
                 if (currentTweets.size() > 0) {
@@ -153,7 +148,11 @@ public class TimelineActivity extends ActionBarActivity {
                         if (lastTweet.uid < lowestId || lowestId == 0) {
                             lowestId = lastTweet.uid;
                         }
+
                         aTweets.addAll(currentTweets);
+
+                        // store new tweets and users to database without blocking UI thread
+                        new AsyncSaveToDB().execute(currentTweets);
                     }
                 }
 
@@ -165,11 +164,46 @@ public class TimelineActivity extends ActionBarActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
                 displayTwitterError("retrieving timeline", error);
-                aTweets.add(new Tweet().getMockTweet());
+//                aTweets.add(new Tweet().getMockTweet());
                 pbFooterLoading.setVisibility(View.GONE);
             }
 
         });
+    }
+
+    public void populateTimelineFromDbOrRest(long lowest) {
+
+        AsyncRetrieveFromDB asyncTask = new AsyncRetrieveFromDB(new AsyncListResponse() {
+
+            @Override
+            public void processFinish(List<Tweet> queryResults) {
+
+                int resultSize = queryResults.size();
+
+                if (resultSize > 0) {
+                    Tweet lastTweet = queryResults.get(resultSize - 1);
+                    Tweet firstTweet = queryResults.get(0);
+                    if (firstTweet.uid > highestId) {
+                        highestId = firstTweet.uid;
+                    }
+                    if (lastTweet.uid < lowestId || lowestId == 0) {
+                        lowestId = lastTweet.uid;
+                    }
+                    // add cached tweets to adapter
+                    aTweets.addAll(queryResults);
+                }
+
+                // if cached results are less than the results per page, call rest api
+                if (resultSize < TwitterClient.RESULTS_PER_PAGE) {
+                    populateTimeline(lowestId, 0);
+                }
+            }
+
+        });
+
+        // start async task
+        asyncTask.execute(lowestId);
+
     }
 
     private void getCurrentUser() {
@@ -206,7 +240,7 @@ public class TimelineActivity extends ActionBarActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 aTweets.clear();
-                // only get new results
+                // only get new results (not db cached results)
                 populateTimeline(0, highestId);
                 Toast.makeText(TimelineActivity.this, "Your status has been updated!", Toast.LENGTH_SHORT).show();
             }

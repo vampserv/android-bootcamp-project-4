@@ -30,13 +30,17 @@ public class Tweet extends Model implements Parcelable {
 	public String body;
     @Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public long uid;
-    @Column(name = "user", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    @Column(name = "user")
     public User user;
     @Column(name = "createdAt")
     public String createdAt;
+    @Column(name = "hashtags")
     public ArrayList<String> hashtags;
+    @Column(name = "userMentions")
     public ArrayList<String> userMentions;
+    @Column(name = "urls")
     public ArrayList<String> urls;
+    @Column(name = "media")
     public ArrayList<String> media;
 
     private TweetUtilities utils;
