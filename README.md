@@ -41,7 +41,7 @@ The following **additional** features are implemented:
 
 Walkthrough of user stories:
 
-![Video Walkthrough](android-bootcamp-project-3-v3.gif)
+![Video Walkthrough](android-bootcamp-project-3.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
