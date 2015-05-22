@@ -49,15 +49,15 @@ public class TweetDetailsActivity extends ActionBarActivity {
         Button btSendReply = (Button) findViewById(R.id.btSendReply);
         TextView tvHashtags = (TextView) findViewById(R.id.tvHashtags);
 
-        tvUser.setText(tweet.getUser().getName());
-        tvBody.setText(tweet.getBody());
-        tvScreenName.setText(tweet.getUser().getScreenName());
-        tvCreatedAt.setText(tweet.getCreatedAt());
+        tvUser.setText(tweet.user.name);
+        tvBody.setText(tweet.body);
+        tvScreenName.setText(tweet.user.screenName);
+        tvCreatedAt.setText(tweet.createdAt);
         ivProfileImage.setImageResource(0);
-        Picasso.with(this).load(tweet.getUser().getProfileImageUrl()).placeholder(R.drawable.placeholder).into(ivProfileImage);
+        Picasso.with(this).load(tweet.user.profileImageUrl).placeholder(R.drawable.placeholder).into(ivProfileImage);
 
         GridView gvMedia = (GridView) findViewById(R.id.gvMedia);
-        ArrayList<String> media = tweet.getMedia();
+        ArrayList<String> media = tweet.media;
         MediaAdapter aMedia =  new MediaAdapter(this, media);
 
         if (media == null) {
@@ -74,14 +74,14 @@ public class TweetDetailsActivity extends ActionBarActivity {
             }
         });
 
-        tvHashtags.setText(utils.ArrayListToString(tweet.getHashtags(), "#", " "));
+        tvHashtags.setText(utils.ArrayListToString(tweet.hashtags, "#", " "));
 
         btSendReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent data = new Intent();
                 data.putExtra("tweetReply", etTweetReply.getText().toString());
-                data.putExtra("replyToId", tweet.getUid());
+                data.putExtra("replyToId", tweet.uid);
                 setResult(RESULT_OK, data);
                 TweetDetailsActivity.this.finish();
             }

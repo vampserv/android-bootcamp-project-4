@@ -23,18 +23,21 @@ import com.codepath.apps.twitterclient.helpers.TweetUtilities;
  * https://github.com/pardom/ActiveAndroid/wiki/Creating-your-database-model
  * 
  */
-@Table(name = "items")
+@Table(name = "tweets")
 public class Tweet extends Model implements Parcelable {
 	// Define table fields
-	@Column(name = "name")
-	private String body;
-    private long uid;
-    private User user;
-    private String createdAt;
-    private ArrayList<String> hashtags;
-    private ArrayList<String> userMentions;
-    private ArrayList<String> urls;
-    private ArrayList<String> media;
+	@Column(name = "body")
+	public String body;
+    @Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    public long uid;
+    @Column(name = "user", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    public User user;
+    @Column(name = "createdAt")
+    public String createdAt;
+    public ArrayList<String> hashtags;
+    public ArrayList<String> userMentions;
+    public ArrayList<String> urls;
+    public ArrayList<String> media;
 
     private TweetUtilities utils;
 
@@ -42,38 +45,7 @@ public class Tweet extends Model implements Parcelable {
 		super();
 	}
 
-    public long getUid() {
-        return uid;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public ArrayList<String> getHashtags() {
-        return hashtags;
-    }
-
-    public ArrayList<String> getUserMentions() {
-        return userMentions;
-    }
-
-    public ArrayList<String> getUrls() {
-        return urls;
-    }
-
-    public ArrayList<String> getMedia() {
-        return media;
-    }
-
+    // convert a json tweet into tweet object
     public static Tweet fromJSON(JSONObject json) {
         Tweet tweet = new Tweet();
 
@@ -93,6 +65,7 @@ public class Tweet extends Model implements Parcelable {
         return tweet;
     }
 
+    // utility method to return a mock tweet
     public Tweet getMockTweet() {
         Tweet tweet = new Tweet();
 

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.activeandroid.query.Select;
 import com.codepath.apps.twitterclient.R;
 import com.codepath.apps.twitterclient.adapters.EndlessScrollListener;
 import com.codepath.apps.twitterclient.adapters.TweetResultsAdapter;
@@ -34,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TimelineActivity extends ActionBarActivity {
 
@@ -94,7 +96,7 @@ public class TimelineActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(TimelineActivity.this, TweetDetailsActivity.class);
                 // get tweet from adapter and pass into intent
-                i.putExtra("Tweet", (Tweet) aTweets.getItem(position));
+                i.putExtra("Tweet", aTweets.getItem(position));
                 // launch new activity for result
                 startActivityForResult(i, TWEET_DETAILS_REQUEST_CODE);
             }
@@ -124,6 +126,14 @@ public class TimelineActivity extends ActionBarActivity {
 
         pbFooterLoading.setVisibility(View.VISIBLE);
 
+//        List<Tweet> queryResults = new Select().from(Tweet.class)
+//                .where("Category = ?", category.getId())
+//                .orderBy("Name ASC")
+//                .orderBy("Name ASC").limit(100);
+//
+//
+//        queryResults.execute();
+
         client.getHomeTimeline(lowest, highest, new JsonHttpResponseHandler() {
 
             @Override
@@ -134,14 +144,14 @@ public class TimelineActivity extends ActionBarActivity {
                 if (currentTweets.size() > 0) {
                     Tweet lastTweet = currentTweets.get(currentTweets.size() - 1);
                     Tweet firstTweet = currentTweets.get(0);
-                    if (currentTweets.size() == 1 && firstTweet.getUid() == highestId) {
+                    if (currentTweets.size() == 1 && firstTweet.uid == highestId) {
                         // dont append to adapter since its a duplicate
                     } else {
-                        if (firstTweet.getUid() > highestId) {
-                            highestId = firstTweet.getUid();
+                        if (firstTweet.uid > highestId) {
+                            highestId = firstTweet.uid;
                         }
-                        if (lastTweet.getUid() < lowestId || lowestId == 0) {
-                            lowestId = lastTweet.getUid();
+                        if (lastTweet.uid < lowestId || lowestId == 0) {
+                            lowestId = lastTweet.uid;
                         }
                         aTweets.addAll(currentTweets);
                     }

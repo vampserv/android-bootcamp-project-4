@@ -20,34 +20,22 @@ import java.util.List;
  * https://github.com/pardom/ActiveAndroid/wiki/Creating-your-database-model
  * 
  */
-@Table(name = "items")
+@Table(name = "users")
 public class User extends Model implements Parcelable {
 
     // Define table fields
 	@Column(name = "name")
-	private String name;
-    private long uid;
-    private String screenName;
-    private String profileImageUrl;
+	public String name;
+    @Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    public long uid;
+    @Column(name = "screenName")
+    public String screenName;
+    @Column(name = "profileImageUrl")
+    public String profileImageUrl;
 
 	public User() {
 		super();
 	}
-    public String getName() {
-        return name;
-    }
-
-    public long getUid() {
-        return uid;
-    }
-
-    public String getScreenName() {
-        return screenName;
-    }
-
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
 
     public static User fromJSON(JSONObject json) {
         User user = new User();
@@ -70,14 +58,14 @@ public class User extends Model implements Parcelable {
         user.profileImageUrl = "http://abs.twimg.com/sticky/default_profile_images/default_profile_6_normal.png";
         return user;
     }
+
 	// Parse model from JSON
 	public User(JSONObject json){
-        User user = new User();
         try {
-            user.name = json.getString("name");
-            user.uid = json.getLong("id");
-            user.screenName = "@" + json.getString("screen_name");
-            user.profileImageUrl = json.getString("profile_image_url");
+            this.name = json.getString("name");
+            this.uid = json.getLong("id");
+            this.screenName = "@" + json.getString("screen_name");
+            this.profileImageUrl = json.getString("profile_image_url");
         } catch (JSONException e) {
             e.printStackTrace();
         }

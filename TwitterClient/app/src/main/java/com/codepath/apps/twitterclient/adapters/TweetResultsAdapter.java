@@ -50,12 +50,12 @@ public class TweetResultsAdapter extends ArrayAdapter<Tweet> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.tvUser.setText(tweet.getUser().getName());
-        viewHolder.tvBody.setText(tweet.getBody());
-        viewHolder.tvScreenName.setText(tweet.getUser().getScreenName());
-        viewHolder.tvCreatedAt.setText(tweet.getCreatedAt());
+        viewHolder.tvUser.setText(tweet.user.name);
+        viewHolder.tvBody.setText(tweet.body);
+        viewHolder.tvScreenName.setText(tweet.user.screenName);
+        viewHolder.tvCreatedAt.setText(tweet.createdAt);
         viewHolder.ivProfileImage.setImageResource(0);
-        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).placeholder(R.drawable.placeholder).into(viewHolder.ivProfileImage);
+        Picasso.with(getContext()).load(tweet.user.profileImageUrl).placeholder(R.drawable.placeholder).into(viewHolder.ivProfileImage);
 
         return convertView;
     }

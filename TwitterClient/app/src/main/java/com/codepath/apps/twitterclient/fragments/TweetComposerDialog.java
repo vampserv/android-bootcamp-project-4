@@ -60,10 +60,10 @@ public class TweetComposerDialog extends DialogFragment {
         ImageView ivAccountProfileImage = (ImageView) view.findViewById(R.id.ivAccountProfileImage);
         etTweetBody = (EditText) view.findViewById(R.id.etTweetBody);
 
-        tvAccountUsername.setText(currentUser.getName());
-        tvAccountScreenname.setText(currentUser.getScreenName());
+        tvAccountUsername.setText(currentUser.name);
+        tvAccountScreenname.setText(currentUser.screenName);
         tvTweetsLeft.setText((tweetsTotal + ""));
-        Picasso.with(mContext).load(currentUser.getProfileImageUrl()).into(ivAccountProfileImage);
+        Picasso.with(mContext).load(currentUser.profileImageUrl).into(ivAccountProfileImage);
 
         Button btSendTweet = (Button) view.findViewById(R.id.btSendTweet);
         Button btCancel = (Button) view.findViewById(R.id.btCancel);
