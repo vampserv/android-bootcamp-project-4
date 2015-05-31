@@ -22,24 +22,30 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_activity_timeline"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabTimeline"
+        app:pstsShouldExpand="true"
+        app:pstsTextAllCaps="true"
+        android:background="#ffffff"
+        app:pstsDividerColor="@android:color/transparent"
+        app:pstsUnderlineColor="#dddddd"
+        app:pstsIndicatorColor="#59aeeb"
+        android:textColor="#59aeeb"
+        app:pstsUnderlineHeight="1dp"
         android:layout_below="@+id/toolbar"
-        android:background="#ffffff">
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+    </com.astuetz.PagerSlidingTabStrip>
 
-    <ListView
-        android:layout_width="wrap_content"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vpTimeline"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lvTimeline" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:background="@android:color/white"
+        android:layout_below="@+id/tabTimeline" />
 
 </RelativeLayout>

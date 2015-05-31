@@ -42,6 +42,8 @@ public class Tweet extends Model implements Parcelable {
     public ArrayList<String> urls;
     @Column(name = "media")
     public ArrayList<String> media;
+    @Column(name = "tweetType")
+    public String tweetType;
 
     private TweetUtilities utils;
 
@@ -70,7 +72,7 @@ public class Tweet extends Model implements Parcelable {
     }
 
     // utility method to return a mock tweet
-    public Tweet getMockTweet() {
+    public Tweet getMockTweet(String tweetType) {
         Tweet tweet = new Tweet();
 
         tweet.body = "This is a mock body http://www.google.com";
@@ -99,18 +101,26 @@ public class Tweet extends Model implements Parcelable {
         tweet.media.add("http://profiler.nethosting.com/assets/images/screenshots/www.github.com.png");
         tweet.media.add("https://camo.githubusercontent.com/59e62574be2bca1ff331ae85ee1c0b392310c599/687474703a2f2f692e696d6775722e636f6d2f39414150344d782e706e67");
 
+        tweet.tweetType = tweetType;
+
         return tweet;
     }
 
     private static ArrayList<String> getListByProperty(JSONArray array, String propertyName) {
         ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
+            JSONObject json = null;
+            String val = null;
             try {
-                JSONObject json = array.getJSONObject(i);
-                String val = json.getString(propertyName);
-                arrayList.add(val);
+                json = array.getJSONObject(i);
+                val = json.getString(propertyName);
             } catch (JSONException e) {
                 e.printStackTrace();
+                continue;
+            }
+
+            if (val != null) {
+                arrayList.add(val);
             }
         }
         return arrayList;

@@ -4,6 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.format.DateUtils;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +19,25 @@ import java.util.Locale;
  * Created by edwardyang on 5/19/15.
  */
 public class TweetUtilities {
+
+    // an error handler for twitter error responses to display a toast with one or more error messages returned from twitter
+    public static void displayTwitterError(Context context, String action, JSONObject error) {
+        if (error == null) {
+            Toast.makeText(context, "Error " + action + ", please try again later", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            JSONArray errorArray = error.getJSONArray("errors");
+            String errors = "";
+            for (int i = 0; i < errorArray.length(); i++) {
+                if (i != 0) errors += ", ";
+                errors += errorArray.getJSONObject(i).getString("message");
+            }
+            Toast.makeText(context, "Error " + action + ": " + errors, Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            Toast.makeText(context, "Error " + action + ", please try again later", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
 
@@ -48,9 +72,6 @@ public class TweetUtilities {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-//        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-//        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     public static String ArrayListToString(ArrayList<String> array, String prefix, String delimiter) {

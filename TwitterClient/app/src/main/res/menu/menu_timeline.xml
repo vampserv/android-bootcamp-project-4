@@ -11,4 +11,12 @@
         app:showAsAction="always"
         />
 
+    <item
+        android:orderInCategory="50"
+        android:id="@+id/miProfile"
+        android:title="Profile"
+        android:icon="@drawable/ic_account"
+        app:showAsAction="always"
+        />
+
 </menu>

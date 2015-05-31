@@ -161,7 +161,7 @@
         android:id="@+id/gvMedia"
         android:layout_alignLeft="@+id/ivProfileImage"
         android:layout_alignStart="@+id/ivProfileImage"
-        android:numColumns="3"
+        android:numColumns="1"
         android:layout_alignRight="@+id/tvBody"
         android:layout_alignEnd="@+id/tvBody"
         android:layout_below="@+id/tvMediaLabel"

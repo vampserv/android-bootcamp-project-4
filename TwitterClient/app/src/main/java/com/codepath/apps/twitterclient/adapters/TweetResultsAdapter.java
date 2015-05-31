@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.codepath.apps.twitterclient.R;
 import com.codepath.apps.twitterclient.helpers.LinkifiedTextView;
 import com.codepath.apps.twitterclient.models.Tweet;
+import com.codepath.apps.twitterclient.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,8 +22,11 @@ import java.util.List;
  */
 public class TweetResultsAdapter extends ArrayAdapter<Tweet> {
 
-    public TweetResultsAdapter(Context context, List<Tweet> objects) {
+    private final TweetResultsAdapterListener listener;
+
+    public TweetResultsAdapter(Context context, List<Tweet> objects, TweetResultsAdapterListener listener) {
         super(context, android.R.layout.simple_list_item_1, objects);
+        this.listener = listener;
     }
 
     private static class ViewHolder {
@@ -31,11 +35,12 @@ public class TweetResultsAdapter extends ArrayAdapter<Tweet> {
         TextView tvScreenName;
         TextView tvCreatedAt;
         ImageView ivProfileImage;
+        ImageView ivReplyImage;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Tweet tweet = getItem(position);
+        final Tweet tweet = getItem(position);
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
@@ -45,6 +50,7 @@ public class TweetResultsAdapter extends ArrayAdapter<Tweet> {
             viewHolder.tvScreenName = (TextView) convertView.findViewById(R.id.tvScreenName);
             viewHolder.tvCreatedAt = (TextView) convertView.findViewById(R.id.tvCreatedAt);
             viewHolder.ivProfileImage = (ImageView) convertView.findViewById(R.id.ivProfileImage);
+            viewHolder.ivReplyImage = (ImageView) convertView.findViewById(R.id.ivReplyImage);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -57,6 +63,30 @@ public class TweetResultsAdapter extends ArrayAdapter<Tweet> {
         viewHolder.ivProfileImage.setImageResource(0);
         Picasso.with(getContext()).load(tweet.user.profileImageUrl).placeholder(R.drawable.placeholder).into(viewHolder.ivProfileImage);
 
+        viewHolder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onViewProfile(tweet.user);
+                }
+            }
+        });
+
+        viewHolder.ivReplyImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onReplyTweet(tweet);
+                }
+            }
+        });
+
         return convertView;
     }
+
+    public interface TweetResultsAdapterListener {
+        void onViewProfile(User user);
+        void onReplyTweet(Tweet tweet);
+    }
+
 }

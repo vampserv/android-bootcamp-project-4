@@ -28,7 +28,8 @@
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1" />
-        <meta-data android:name="AA_SERIALIZERS"
+        <meta-data
+            android:name="AA_SERIALIZERS"
             android:value="com.codepath.apps.twitterclient.helpers.ArrayListSerializer" />
 
         <activity
@@ -62,6 +63,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.codepath.apps.twitterclient.activities.TimelineActivity" />
+        </activity>
+        <activity
+            android:name=".activities.UserDetailsActivity"
+            android:label="@string/title_activity_profile" >
         </activity>
     </application>
 
